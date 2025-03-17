@@ -105,7 +105,10 @@ To process PDFs with both custom directories:
 ```bash
 python index_pdf.py --process --pdf-dir /path/to/your/pdfs --index-root /path/to/custom/index/dir
 ```
-
+e.g.
+```bash
+ python index_pdf.py --process --index-root '../sail-chat/.byaldi' --pdf-dir '../sail-chat/data/pdfs'
+```
 ### Searching
 
 Basic search:
@@ -140,6 +143,18 @@ python index_pdf.py --update-metadata
 To update metadata from a custom directory:
 ```bash
 python index_pdf.py --update-metadata --pdf-dir /path/to/your/pdfs
+```
+
+### Removing PDFs
+
+To remove a PDF from the index (this will also remove the PDF directory and its images):
+```bash
+python index_pdf.py --remove 1  # where 1 is the PDF ID from metadata.json
+```
+
+To remove a PDF from a custom directory:
+```bash
+python index_pdf.py --remove 1 --pdf-dir /path/to/your/pdfs
 ```
 
 ## Configuration

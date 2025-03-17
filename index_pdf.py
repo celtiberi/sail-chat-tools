@@ -539,6 +539,52 @@ class PDFIndexer:
             f"- Average {total_images/len(processed_pdfs):.1f} images per PDF"
         )
 
+    def remove_pdf(self, pdf_id: int) -> None:
+        """Remove a PDF and its associated data from the index.
+        
+        Args:
+            pdf_id: ID of the PDF to remove
+        """
+        # Find the PDF in the collection
+        pdf = next((p for p in self.pdf_collection.pdfs if p.id == pdf_id), None)
+        if not pdf:
+            raise ValueError(f"PDF with ID {pdf_id} not found in metadata.json")
+            
+        logger.info(f"Removing PDF: {pdf.title} (ID: {pdf_id})")
+        
+        # Find all images for this PDF in the index
+        matching_doc_ids = []
+        for doc_id, metadata_list in self.RAG.model.doc_id_to_metadata.items():
+            try:
+                metadata = metadata_list[0]  # Get first (and only) metadata dict
+                if metadata["filename"] == pdf.file:
+                    matching_doc_ids.append(doc_id)
+            except Exception as e:
+                logger.error(f"Error processing doc_id {doc_id}: {str(e)}")
+                logger.error(f"Metadata list: {metadata_list}")
+                raise e
+        
+        if matching_doc_ids:
+            logger.info(f"Found {len(matching_doc_ids)} images to remove from index")
+            # Remove each document from the index
+            for doc_id in matching_doc_ids:
+                self.RAG.remove_from_index(doc_id)
+            # Save changes to disk
+            self.RAG.model._export_index()
+        
+        # Remove the PDF directory and its contents
+        pdf_path = self._get_pdf_path(pdf)
+        if pdf_path.exists():
+            import shutil
+            shutil.rmtree(pdf_path)
+            logger.info(f"Removed PDF directory: {pdf_path}")
+        
+        # Remove from collection and save metadata
+        self.pdf_collection.pdfs.remove(pdf)
+        self._save_pdf_collection()
+        
+        logger.info(f"Successfully removed PDF {pdf.title} (ID: {pdf_id})")
+
 
 def main():
     console = Console()
@@ -550,6 +596,11 @@ def main():
         "--update-metadata", 
         action="store_true",
         help="Update metadata for all processed PDFs in the index"
+    )
+    parser.add_argument(
+        "--remove",
+        type=int,
+        help="Remove a PDF from the index by its ID"
     )
     parser.add_argument(
         "--filter",
@@ -585,6 +636,12 @@ def main():
         console.print("[cyan]Initializing visual PDF processor...[/cyan]")
         vectorizer = PDFIndexer(pdf_dir=args.pdf_dir, index_root=args.index_root)
         
+        if args.remove is not None:
+            console.print(f"[cyan]Removing PDF with ID {args.remove}...[/cyan]")
+            vectorizer.remove_pdf(args.remove)
+            console.print(f"[green]PDF removal complete![/green]")
+            return
+            
         if args.process:
             console.print("[cyan]Processing PDFs...[/cyan]")
             vectorizer.process_pdfs()
