@@ -68,11 +68,21 @@ To process and index PDFs:
 python index_pdf.py --process
 ```
 
+To process PDFs from a custom directory:
+```bash
+python index_pdf.py --process --pdf-dir /path/to/your/pdfs
+```
+
 ### Searching
 
 Basic search:
 ```bash
 python index_pdf.py --search "your search query"
+```
+
+Search in a custom PDF directory:
+```bash
+python index_pdf.py --search "query" --pdf-dir /path/to/your/pdfs
 ```
 
 Search with metadata filters:
@@ -94,11 +104,21 @@ To update metadata for all processed PDFs:
 python index_pdf.py --update-metadata
 ```
 
+To update metadata from a custom directory:
+```bash
+python index_pdf.py --update-metadata --pdf-dir /path/to/your/pdfs
+```
+
 ### Custom Index Location
 
 To specify a custom location for the index:
 ```bash
 python index_pdf.py --process --index-root /path/to/custom/index/dir
+```
+
+To specify both custom PDF directory and index location:
+```bash
+python index_pdf.py --process --pdf-dir /path/to/your/pdfs --index-root /path/to/custom/index/dir
 ```
 
 ## Configuration

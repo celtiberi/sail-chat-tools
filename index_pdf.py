@@ -570,11 +570,16 @@ def main():
         default=".byaldi",
         help="Root directory for storing indexes (default: .byaldi)"
     )
+    parser.add_argument(
+        "--pdf-dir",
+        default="./data/pdfs",
+        help="Directory containing PDFs and metadata (default: ./data/pdfs)"
+    )
     args = parser.parse_args()
     
     try:
         console.print("[cyan]Initializing visual PDF processor...[/cyan]")
-        vectorizer = PDFIndexer(index_root=args.index_root)
+        vectorizer = PDFIndexer(pdf_dir=args.pdf_dir, index_root=args.index_root)
         
         if args.process:
             console.print("[cyan]Processing PDFs...[/cyan]")
