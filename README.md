@@ -29,7 +29,7 @@ cd sail-chat-tools
 
 2. Create and activate a conda environment:
 ```bash
-conda create -n sail-chat-tools python=3.10
+conda create -n sail-chat-tools python=3.11
 conda activate sail-chat-tools
 ```
 
@@ -98,7 +98,7 @@ python index_pdf.py --update-metadata
 
 To specify a custom location for the index:
 ```bash
-python index_pdf.py --index-root /path/to/custom/index/dir
+python index_pdf.py --process --index-root /path/to/custom/index/dir
 ```
 
 ## Configuration
