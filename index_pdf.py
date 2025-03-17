@@ -80,26 +80,30 @@ class PDFIndexer:
             index_name: Name of the Byaldi index
             index_root: Root directory for storing indexes, defaults to '.byaldi'
         """
+        # Resolve paths relative to the current working directory
         pdf_dir_path = Path(pdf_dir).resolve()
+        index_root_path = Path(index_root).resolve()
+        
         if not pdf_dir_path.exists():
             raise ValueError(f"PDF directory {pdf_dir_path} does not exist")
         if not (pdf_dir_path / "metadata.json").exists():
             raise ValueError(f"metadata.json not found in {pdf_dir_path}")
+            
         self.pdf_dir = pdf_dir_path
         self.index_name = index_name
         self.pdf_collection = self._load_pdf_collection()
-        self.index_root = Path(index_root)
+        self.index_root = index_root_path
         self.index_path = self.index_root / self.index_name
 
         if self.index_root.exists():
             self.RAG = RAGMultiModalModel.from_index(
-                index_path=self.index_name,
+                index_path=str(self.index_path),  # Convert Path to string
                 device=Config.DEVICE)
         else:
             with tempfile.TemporaryDirectory() as empty_dir:
                 self.RAG = RAGMultiModalModel.from_pretrained(
                     pretrained_model_name_or_path=Config.MODEL_NAME,
-                    index_root=self.index_root,
+                    index_root=str(self.index_root),  # Convert Path to string
                     device=Config.DEVICE
                 )
                 # Create empty index by passing an empty directory
