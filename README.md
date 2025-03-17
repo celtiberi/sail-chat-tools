@@ -13,11 +13,34 @@ A Python-based tool for indexing and searching PDF documents using visual unders
 
 ## Prerequisites
 
-- Python 3.10 or higher
-- Poppler (required for PDF processing)
-  - macOS: `brew install poppler`
-  - Ubuntu/Debian: `sudo apt-get install poppler-utils`
-  - Windows: Download from [poppler-windows](http://blog.alivate.com.au/poppler-windows/)
+### Required System Dependencies
+
+1. **Poppler** - Required for PDF processing. Must be installed before running the script.
+   
+   **macOS:**
+   ```bash
+   brew install poppler
+   ```
+   
+   **Ubuntu/Debian:**
+   ```bash
+   sudo apt-get update
+   sudo apt-get install poppler-utils
+   ```
+   
+   **Windows:**
+   1. Download poppler from [poppler-windows](http://blog.alivate.com.au/poppler-windows/)
+   2. Extract to a directory (e.g., `C:\Program Files\poppler`)
+   3. Add the `bin` directory to your system PATH
+
+2. **Python 3.10 or higher**
+
+### Python Dependencies
+
+Install all required Python packages:
+```bash
+pip install -r requirements.txt
+```
 
 ## Installation
 
@@ -29,7 +52,7 @@ cd sail-chat-tools
 
 2. Create and activate a conda environment:
 ```bash
-conda create -n sail-chat-tools python=3.11
+conda create -n sail-chat-tools python=3.10
 conda activate sail-chat-tools
 ```
 
@@ -73,6 +96,16 @@ To process PDFs from a custom directory:
 python index_pdf.py --process --pdf-dir /path/to/your/pdfs
 ```
 
+To process PDFs with a custom index location:
+```bash
+python index_pdf.py --process --index-root /path/to/custom/index/dir
+```
+
+To process PDFs with both custom directories:
+```bash
+python index_pdf.py --process --pdf-dir /path/to/your/pdfs --index-root /path/to/custom/index/dir
+```
+
 ### Searching
 
 Basic search:
@@ -109,18 +142,6 @@ To update metadata from a custom directory:
 python index_pdf.py --update-metadata --pdf-dir /path/to/your/pdfs
 ```
 
-### Custom Index Location
-
-To specify a custom location for the index:
-```bash
-python index_pdf.py --process --index-root /path/to/custom/index/dir
-```
-
-To specify both custom PDF directory and index location:
-```bash
-python index_pdf.py --process --pdf-dir /path/to/your/pdfs --index-root /path/to/custom/index/dir
-```
-
 ## Configuration
 
 Key configuration settings in `Config` class:
@@ -153,6 +174,7 @@ sail-chat-tools/
 - Processing can be resumed if interrupted - the script tracks progress in metadata.json
 - The .byaldi directory contains the search index and will be created automatically
 - Large PDFs may take significant time to process due to high DPI conversion
+- Make sure poppler is installed and in your system PATH before running the script
 
 ## License
 
